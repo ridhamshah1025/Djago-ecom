@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+    <!--================Checkout Area =================-->
+    <section class="checkout_area section_gap">
+        <div class="container">
+
+
+            <div class="billing_details">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3>Billing Details</h3>
+                        <form class="row contact_form" action="{% url 'update' %}" method="POST" novalidate="novalidate">
+                            {% csrf_token %}
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="first" placeholder="First name" name="first_name" value="{{request.user.first_name}}">
+
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="last" placeholder="Last name" name="last_name" value="{{request.user.last_name}}">
+
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="username" placeholder="Username" readonly name="username" value="{{request.user.username}}">
+
+                            </div>
+
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="number" placeholder="Phone number" name="mobile_number" value="{{user_profile.mobile_no}}">
+
+
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="email" readonly  placeholder="Email Address" name="email" value="{{request.user.email}}">
+
+                            </div>
+
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="add1" value="{{ address.add_line_1 }}" name="add_1">
+
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="add2" value="{{ address.add_line_2 }}"  name="add_2">
+
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="city" value="{{address.city}}" name="city">
+
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="contry" value="{{ address.country }}" name="country">
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="zip" name="zip"  value="{{ address.zipcode }}" placeholder="Postcode/ZIP">
+                            </div>
+                            <div class="col-md-3 mx-auto form-group">
+                                <input type="submit" class="primary-btn" id="update" name="update" value="Update">
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--================End Checkout Area =================-->
+{% endblock %}

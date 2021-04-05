@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+    <!--================Cart Area =================-->
+    <section class="cart_area">
+        <div class="container">
+            <div class="cart_inner">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in orders %}
+                            <tr>
+                                <td>
+                                    <div class="media">
+                                        <div class="col-sm-6 col-md-6 col-lg-4">
+                                            <img src="{{ i.product_id.product_image.url }}" class="img-thumbnail" alt="">
+                                        </div>
+                                        <div class="media-body">
+                                            <p>{{i.product_id.name}}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5 class="product_price">{{i.product_id.price}}</h5>
+                                </td>
+                                <td>
+                                    <div class="product_count">
+                                        <input type="text" class="quantity" name="quantity" id="sst" readonly maxlength="12"  value="{{i.order_quantity}}" title="Quantity:" >
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5 class = "total"></h5>
+                                </td>
+                                <td>
+                                    <form method="POST" action="{% url 'delete_cart' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="order_id" value="{{ i.id }}">
+                                    <button type="submit" class="btn btn-default btn-sm">
+                                            <span class="lnr lnr-trash"></span>
+                                    </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <h5>Subtotal</h5>
+                                </td>
+                                <td>
+                                    <h5 id = "subtotal" >
+
+                                    </h5>
+                                </td>
+                            </tr>
+                            <tr class="shipping_area">
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <h5>Shipping</h5>
+
+                                </td>
+                                <td>
+                                    <h5>
+                                        {{address.add_line_2}}
+                                    </h5>
+                                </td>
+
+                            </tr>
+                            <tr class="out_button_area">
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <div class="checkout_btn_inner d-flex mx-auto align-items-center">
+
+                                        <form method="POST" action="{% url 'checkout' %}">
+                                            {% csrf_token %}
+                                            <input type="submit" value="Proceed to checkout" class="btn btn-warning">
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+    <!--================End Cart Area =================-->
+
+{% block scripts %}
+<script>
+
+
+
+    window.onload = total_price();
+
+
+
+
+
+    function total_price() {
+        var total = document.getElementsByClassName("total");
+        var subtotal= 0;
+        // alert("onload");
+        var i;
+        // alert(total.length);
+        for (i = 0; i < total.length; i++)
+            {
+                var s = parseInt(document.getElementsByClassName("product_price")[i].innerHTML);
+                {#alert(s);#}
+                var z = parseInt(document.getElementsByClassName("quantity")[i].value);
+                {#alert(z);#}
+                document.getElementsByClassName("total")[i].innerHTML = s*z;
+                {#alert(s*z)#}
+
+            }
+        for (i = 0; i < total.length; i++)
+            {
+                var x = parseInt(document.getElementsByClassName("total")[i].innerHTML);
+                subtotal += x ;
+            }
+        // alert(subtotal)
+        document.getElementById("subtotal").innerHTML = "Rs "+subtotal;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+    <!--================Checkout Area =================-->
+    <section class="checkout_area section_gap">
+        <div class="container">
+
+
+            <div class="billing_details">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3>Billing Details</h3>
+                        <form class="row contact_form" action="#" method="post" novalidate="novalidate">
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="first" placeholder="First name" name="first_name" value="{{request.user.first_name}}">
+
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="last" placeholder="Last name" name="last_name" value="{{request.user.last_name}}">
+
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="username" placeholder="Username" readonly name="username" value="{{request.user.username}}">
+
+                            </div>
+
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="number" placeholder="Phone number" name="mobile_number" value="{{user_profile.mobile_no}}">
+
+
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="email" readonly  placeholder="Email Address" name="email" value="{{request.user.email}}">
+
+                            </div>
+
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="add1" value="{{ address.add_line_1 }}" name="add_1">
+
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="add2" value="{{ address.add_line_2 }}"  name="add_2">
+
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="city" value="{{address.city}}" name="city">
+
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="contry" value="{{ address.country }}" name="country">
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="zip" name="zip"  value="{{ address.zipcode }}" placeholder="Postcode/ZIP">
+                            </div>
+
+
+                        </form>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="order_box">
+                            <h2>Your Order</h2>
+                            <ul class="list">
+                                <li><div class="d-flex justify-content-between">
+                                            <div>
+                                                Order
+                                            </div>
+                                            <div >
+                                                Price
+                                            </div>
+                                            <div >
+                                                Quantity
+                                            </div>
+                                            <div >
+                                                Total
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% for i in orders %}
+                                    <li><div class="d-flex justify-content-between">
+                                            <div>
+                                                {{i.product_id.name}}
+                                            </div>
+                                            <div class="product_price">
+                                                {{i.product_id.price}}
+                                            </div>
+                                            <div class="quantity">
+                                                {{i.order_quantity}}
+                                            </div>
+                                            <div class="total">
+                                            </div>
+
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <ul class="list list_2">
+                                <li><a href="#">Subtotal <span id = "subtotal"></span></a></li>
+                                <li><a href="#" >Shipping <span id="shipping_rate"></span></a></li>
+                                <li><a href="#">Total (with Tax) <span id="total"></span></a></li>
+                            </ul>
+                            <div class="creat_account">
+                                <input type="checkbox" id="f-option4" name="selector">
+                                <label for="f-option4">I’ve read and accept the </label>
+                                <a href="#">terms & conditions*</a>
+                            </div>
+                            <form method="POST" name="form_checkout" action="{% url 'payment' %}">
+                                {% csrf_token %}
+                                <input type="hidden" id="hidden_total" name="hidden_total" value="">
+                                <input type="hidden" id="hidden_shipping" name="hidden_shipping" value="">
+                                <input type="submit" class="primary-btn ml-5" value="Proceed to Paypal" >
+                                </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--================End Checkout Area =================-->
+{% endblock %}
+    <!-- start footer Area -->
+  {% block scripts %}
+
+    <script>
+        window.onload = calc_total();
+
+       function calc_total()
+        {
+
+
+           var total = document.getElementsByClassName("total");
+        var subtotal= 0;
+        // alert("onload");
+        var i;
+        {#alert(total.length);#}
+        for (i = 0; i < total.length; i++)
+            {
+                var s = parseInt(document.getElementsByClassName("product_price")[i].innerHTML);
+                {#alert(s);#}
+                var z = parseInt(document.getElementsByClassName("quantity")[i].innerHTML);
+                {#alert(z);#}
+                document.getElementsByClassName("total")[i].innerHTML = s*z;
+                {#alert(s*z)#}
+
+            }
+        for (i = 0; i < total.length; i++)
+            {
+                var x = parseInt(document.getElementsByClassName("total")[i].innerHTML);
+                subtotal += x ;
+            }
+        // alert(subtotal)
+        document.getElementById("subtotal").innerHTML = "Rs "+subtotal;
+        var shipping = 50;
+        // alert(shipping);
+        document.getElementById("shipping_rate").innerHTML = "Rs "+shipping;
+        var gst = (subtotal * 18)/100;
+        // alert(gst);
+        var total = subtotal + gst + shipping;
+        // alert(total);
+        document.getElementById("total").innerHTML = "Rs "+total;
+        // alert(document.form_checkout.hidden_total.value);
+        // alert(document.form_checkout.hidden_shipping.value);
+        document.form_checkout.hidden_total.value = total;
+        document.form_checkout.hidden_shipping.value = shipping;
+        // alert(document.form_checkout.hidden_total.value);
+        // alert(document.form_checkout.hidden_shipping.value);
+
+
+        }
+
+
+    </script>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+
+	<!--================Single Product Area =================-->
+	<div class="product_image_area">
+		<div class="container">
+			<div class="row s_product_inner">
+				<div class="col-lg-6">
+
+
+
+						<div class="col-sm-6 col-md-6 col-lg-4">
+							<img class="img-fluid" src="{{product.product_image.url}}" alt="">
+						</div>
+
+				</div>
+				<div class="col-lg-5 offset-lg-1">
+					<div class="s_product_text">
+						<h3>{{product.name}}</h3>
+						<h2 id = "product_price">Rs{{product.price}}</h2>
+						<ul class="list">
+							<li><a class="active" href="#"><span>Category</span>{{product.category_id.category}}</a></li>
+							<li><a href="#"><span>Availibility</span> : In Stock</a></li>
+						</ul>
+						<p>{{product.description}}</p>
+						<div class="product_count">
+							<label for="qty">Quantity:</label>
+							<input type="text" name="qty" id="quantity" maxlength="12" value="1" title="Quantity:" class="input-text qty">
+
+						</div>
+						<div class="card_area d-flex align-items-center">
+							<input type="hidden" value="{{product.id}}" id="product_id" name="hidden_product_id">
+							<a class="social-info">
+										<span data-id = "{{product.id}}" onclick="add_to_cart()">
+											<button class="btn btn-warning">Add To Cart</button>
+										</span>
+									</a>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--================End Single Product Area =================-->
+<br>
+    <br>
+{% endblock %}
+	<!-- start footer Area -->
+	{% block scripts %}
+
+<script>
+
+function add_to_cart(element)
+		{
+
+			{% if request.user.is_authenticated %}
+            // alert(inputElement.id)
+			// let button = $(element);
+			var product_id = document.getElementById("product_id").value;
+			// var product_id = document.getElementById("button_id").value;
+			// alert(product_id);
+			// var btn_product_id = document.getElementById("product_id").value;
+            // var button_class = document.getElementsByTagName("BUTTON")[0].id;
+            // alert(button_class);
+            // alert(id_name.item(1).id);
+			// alert(btn_product_id);
+			// var product_id = document.getElementById("product_id").value;
+			// var user_id = document.getElementById("user_id").value;
+			var user_id = {{request.user.id}};
+			// alert(user_id);
+			var order_quantity =  document.getElementById("quantity").value;
+			// alert(order_quantity)
+
+							$.ajax({
+    									method: "GET",
+										url: "{% url 'add_to_cart' %}",
+										headers: {'X-CSRFToken': '{{ csrf_token }}'},
+										contentType: "application/json",
+										data: {user_id : user_id , product_id : product_id , order_quantity : order_quantity}
+									})
+							.fail(function(message) {
+									alert(console.log(message));
+								})
+							.done(function(data) {
+									alert(data);
+								});
+			{% else %}
+			alert("Login");
+			{% endif %}
+
+		}
+	</script>
+{% endblock %}

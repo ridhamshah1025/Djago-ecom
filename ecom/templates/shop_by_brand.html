@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+    {% if messages %}
+	<!-- End Banner Area -->
+	<div class="container">
+		<div class="row">
+				<div class="mx-auto">
+				<form method="get" action="{% url 'brand_result' %}" >
+										  <div class="form-row w-100"  >
+											<div class="form-group w-100" >
+											  <label for="inputState"></label>
+											  <select id="inputState" name="brand" class="form-control w-100">
+												<option selected>Select Brand</option>
+												  {% for i in brand %}
+												<option>{{i}}</option>
+												  {% endfor %}
+											  </select>
+											</div>
+
+											</div>
+					<button type="submit" class="btn btn-warning ml-3">Result</button>
+				</form>
+				</div>
+		</div>
+	</div>
+
+
+		<!-- single product slide -->
+		<div class="single-product-slider">
+			<div class="container">
+				<div class="row justify-content-center">
+					<div class="col-lg-6 text-center">
+						<div class="section-title">
+
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<!-- single product -->
+					{% for j in products %}
+					<div class="col-lg-3 col-md-6">
+						<div class="single-product">
+							<a href="{% url 'single_product' j.id  %}">
+							<img   class="img-thumbnail"  src="{{j.product_image.url}}" alt="">
+							</a>
+							<div class="product-details">
+								<h6>{{j.name}}</h6>
+								<div class="price">
+									<h6>Rs{{j.price}}</h6>
+								</div>
+								<div class="prd-bottom">
+
+									<a class="social-info">
+										<span class="ti-bag" data-id = "{{j.id}}" onclick="add_to_cart(this)">
+											<p class="hover-text">add to bag</p>
+
+										</span>
+									</a>
+
+								</div>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+
+				</div>
+			</div>
+		</div>
+    {% else %}
+        <br><br><br><br><br>
+        <div class="container">
+		<div class="row">
+				<div class="mx-auto">
+				<form method="get" action="{% url 'brand_result' %}" >
+										  <div class="form-row w-100"  >
+											<div class="form-group w-100" >
+											  <label for="inputState"></label>
+											  <select id="inputState" name="brand" class="form-control w-100">
+												<option selected>Select Brand</option>
+												  {% for i in brand %}
+												<option>{{i}}</option>
+												  {% endfor %}
+											  </select>
+											</div>
+
+											</div>
+					<button type="submit" class="btn btn-warning ml-3">Result</button>
+				</form>
+				</div>
+		</div>
+	</div>
+
+
+		<!-- single product slide -->
+		<div class="single-product-slider">
+			<div class="container">
+				<div class="row justify-content-center">
+					<div class="col-lg-6 text-center">
+						<div class="section-title">
+
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<!-- single product -->
+					{% for j in products %}
+					<div class="col-lg-3 col-md-6">
+						<div class="single-product">
+							<a href="{% url 'single_product' j.id  %}">
+							<img   class="img-thumbnail"  src="{{j.product_image.url}}" alt="">
+							</a>
+							<div class="product-details">
+								<h6>{{j.name}}</h6>
+								<div class="price">
+									<h6>Rs{{j.price}}</h6>
+								</div>
+								<div class="prd-bottom">
+<!--									<form>-->
+<!--										{% csrf_token %}-->
+<!--										<input type="hidden" class="product_id" value="{{j.id}}" id="pro{{j.id}}">-->
+
+<!--										<input type="hidden" value="{{user.id}}" id="user_id">-->
+<!--									<button type="button" id="{{j.id}}" value="{{j.id}}" class="btn" onclick="add_to_cart()">-->
+<!--										<i class="fa fa-shopping-cart fa-lg" aria-hidden="true"></i>-->
+<!--									</button>-->
+<!--									</form>-->
+									<a class="social-info">
+										<span class="ti-bag" data-id = "{{j.id}}" onclick="add_to_cart(this)">
+											<p class="hover-text">add to bag</p>
+
+										</span>
+									</a>
+
+								</div>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+
+				</div>
+			</div>
+		</div>
+    {% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+
+		function add_to_cart(element)
+		{
+
+			{% if request.user.is_authenticated %}
+            // alert(inputElement.id)
+			let button = $(element);
+			let product_id = button.data("id");
+			// var product_id = document.getElementById("button_id").value;
+			// alert(product_id);
+			// var btn_product_id = document.getElementById("product_id").value;
+            // var button_class = document.getElementsByTagName("BUTTON")[0].id;
+            // alert(button_class);
+            // alert(id_name.item(1).id);
+			// alert(btn_product_id);
+			// var product_id = document.getElementById("product_id").value;
+			// var user_id = document.getElementById("user_id").value;
+
+			// alert(user_id);
+			var user_id = {{request.user.id}};
+			// alert(user_id);
+
+							var order_quantity = parseInt(1);
+							$.ajax({
+    									method: "GET",
+										url: "{% url 'add_to_cart' %}",
+										headers: {'X-CSRFToken': '{{ csrf_token }}'},
+										contentType: "application/json",
+										data: {user_id : user_id , product_id : product_id , order_quantity : order_quantity}
+									})
+							.fail(function(message) {
+									alert(console.log(message));
+								})
+							.done(function(data) {
+									alert(data);
+								});
+			{% else %}
+			alert("Login");
+			{% endif %}
+
+		}
+	</script>
+
+{% endblock %}
